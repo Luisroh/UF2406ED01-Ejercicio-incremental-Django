@@ -9,7 +9,8 @@
         <p><strong>Descripción:</strong></p>
         <p>{{ producto.descripcion }}</p>
 
-        {% if user == producto.usuario %}
+        {# El dueño O el staff pueden editar/eliminar #}
+        {% if user == producto.usuario or user.is_staff %}
         <hr>
         <a href="{% url 'producto_editar' producto.pk %}" class="btn btn-secondary">Editar</a>
         <a href="{% url 'producto_eliminar' producto.pk %}" class="btn btn-danger">Eliminar</a>

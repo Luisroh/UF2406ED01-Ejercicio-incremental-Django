@@ -29,10 +29,25 @@
                         <a class="nav-link" href="{% url 'mis_products' %}">Mis productos</a>
                     </li>
                     {% endif %}
+
+                    {# Punto 10: Enlace visible solo para staff #}
+                    {% if user.is_staff %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'panel_admin' %}">Administración</a>
+                    </li>
+                    {% endif %}
                 </ul>
                 <div class="d-flex align-items-center gap-2">
                     {% if user.is_authenticated %}
-                    <span class="text-white">Hola, {{ user.username }}</span>
+                    <span class="text-white">
+                        Hola, {{ user.username }}
+                        {# Punto 13: Badge de rol #}
+                        {% if user.is_staff %}
+                        <span class="badge bg-danger">Administrador</span>
+                        {% else %}
+                        <span class="badge bg-secondary">Usuario</span>
+                        {% endif %}
+                    </span>
                     <form method="post" action="{% url 'logout' %}">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-outline-light btn-sm">Cerrar sesión</button>

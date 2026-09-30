@@ -23,8 +23,8 @@
             <div class="card-footer bg-white">
                 <a href="{% url 'producto_detalle' producto.pk %}" class="btn btn-outline-primary btn-sm">Ver</a>
 
-                {# Solo mostramos botones si el usuario es el dueño #}
-                {% if user == producto.usuario %}
+                {# Punto 5: El dueño O el staff pueden ver los botones #}
+                {% if user == producto.usuario or user.is_staff %}
                 <a href="{% url 'producto_editar' producto.pk %}" class="btn btn-outline-secondary btn-sm">Editar</a>
                 <a href="{% url 'producto_eliminar' producto.pk %}" class="btn btn-outline-danger btn-sm">Eliminar</a>
                 {% endif %}
