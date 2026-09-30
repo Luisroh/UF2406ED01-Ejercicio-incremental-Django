@@ -9,7 +9,6 @@
                 <h1 class="h3 mb-4">Crear cuenta</h1>
                 <form method="post">
                     {% csrf_token %}
-                    <!-- Iteramos sobre los campos del formulario manualmente para tener control sobre el diseño -->
                     {% for field in form %}
                     <div class="mb-3">
                         <label class="form-label">{{ field.label }}</label>

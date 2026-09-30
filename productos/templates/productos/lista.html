@@ -1,66 +1,40 @@
 {% extends "base.html" %}
+{% block title %}Productos{% endblock %}
+
 {% block content %}
-<div class="d-flex justify-content-between
-align-items-center mb-4">
-    <h1>
-        Categorías
-    </h1>
-    <a href="{% url 'categoria_crear' %}" class="btn btn-primary">
-        + Nueva categoría
-    </a>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Productos</h1>
+    {% if user.is_authenticated %}
+    <a href="{% url 'producto_crear' %}" class="btn btn-primary">+ Nuevo producto</a>
+    {% endif %}
 </div>
-<div class="card shadow-sm">
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>
-                            Nombre
-                        </th>
-                        <th>
-                            Descripción
-                        </th>
-                        <th>
-                            Productos
-                        </th>
-                        <th>
-                            Acciones
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for categoria in categorias %}
-                    <tr>
-                        <td>
-                            {{ categoria.nombre }}
-                        </td>
-                        <td>
-                            {{ categoria.descripcion }}
-                        </td>
-                        <td>
-                            {{ categoria.productos.count }}
-                        </td>
-                        <td>
-                            <a href="{% url 'categoria_editar' categoria.pk %}"
-                                class="btn btn-sm btn-outline-secondary">
-                                Editar
-                            </a>
-                            <a href="{% url 'categoria_eliminar' categoria.pk %}" class="btn btn-sm btn-outline-danger">
-                                Eliminar
-                            </a>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="4">
-                            No existen categorías.
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+
+<div class="row g-4">
+    {% for producto in productos %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">{{ producto.nombre }}</h5>
+                <p class="text-muted mb-1">Categoría: {{ producto.categoria.nombre }}</p>
+                <p class="text-muted">Publicado por: {{ producto.usuario.username }}</p>
+                <p class="card-text">{{ producto.descripcion|truncatewords:20 }}</p>
+                <p class="fw-bold fs-5">{{ producto.precio }} €</p>
+            </div>
+            <div class="card-footer bg-white">
+                <a href="{% url 'producto_detalle' producto.pk %}" class="btn btn-outline-primary btn-sm">Ver</a>
+
+                {# Solo mostramos botones si el usuario es el dueño #}
+                {% if user == producto.usuario %}
+                <a href="{% url 'producto_editar' producto.pk %}" class="btn btn-outline-secondary btn-sm">Editar</a>
+                <a href="{% url 'producto_eliminar' producto.pk %}" class="btn btn-outline-danger btn-sm">Eliminar</a>
+                {% endif %}
+            </div>
         </div>
     </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">No existen productos.</div>
+    </div>
+    {% endfor %}
 </div>
 {% endblock %}

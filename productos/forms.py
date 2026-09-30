@@ -3,16 +3,13 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Categoria, Producto
 
-# Mixin: Una clase que añade funcionalidad extra a los formularios
+# Mixin para aplicar clases de Bootstrap automáticamente
 class BootstrapFormMixin:
     def aplicar_bootstrap(self):
-        # Recorremos todos los campos del formulario
         for field in self.fields.values():
-            # Si es un checkbox, usamos la clase específica de Bootstrap
             if isinstance(field.widget, forms.CheckboxInput):
                 field.widget.attrs["class"] = "form-check-input"
             else:
-                # Para el resto (texto, email, textarea), usamos form-control
                 field.widget.attrs["class"] = "form-control"
 
 class RegistroForm(BootstrapFormMixin, UserCreationForm):
@@ -24,7 +21,6 @@ class RegistroForm(BootstrapFormMixin, UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Aplicamos Bootstrap al inicializar el formulario
         self.aplicar_bootstrap()
 
     def clean_email(self):
@@ -48,6 +44,7 @@ class CategoriaForm(BootstrapFormMixin, forms.ModelForm):
 class ProductoForm(BootstrapFormMixin, forms.ModelForm):
     class Meta:
         model = Producto
+        # OJO: "usuario" NO está aquí, se asigna en la vista
         fields = ["nombre", "descripcion", "precio", "categoria"]
 
     def __init__(self, *args, **kwargs):

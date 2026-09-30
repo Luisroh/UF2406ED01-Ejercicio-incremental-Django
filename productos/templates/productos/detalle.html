@@ -1,28 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>
-    {{ producto.nombre }}
-</h1>
-<p>
-    <strong>Categoría:</strong>
-    {{ producto.categoria.nombre }}
-</p>
-<p>
-    <strong>Descripción:</strong>
-    {{ producto.descripcion }}
-</p>
-<p>
-    <strong>Precio:</strong>
-    {{ producto.precio }} €
-</p>
-{% if user.is_authenticated %}
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h1>{{ producto.nombre }}</h1>
+        <p><strong>Categoría:</strong> {{ producto.categoria.nombre }}</p>
+        <p><strong>Precio:</strong> {{ producto.precio }} €</p>
+        <p><strong>Propietario:</strong> {{ producto.usuario.username }}</p>
+        <p><strong>Descripción:</strong></p>
+        <p>{{ producto.descripcion }}</p>
 
-<a href="{% url 'producto_editar' producto.pk %}">
-    Editar
-</a>
-|
-<a href="{% url 'producto_eliminar' producto.pk %}">
-    Eliminar
-</a>
-{% endif %}
+        {% if user == producto.usuario %}
+        <hr>
+        <a href="{% url 'producto_editar' producto.pk %}" class="btn btn-secondary">Editar</a>
+        <a href="{% url 'producto_eliminar' producto.pk %}" class="btn btn-danger">Eliminar</a>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

@@ -4,29 +4,17 @@
     <div class="col-md-6">
         <div class="card border-danger shadow-sm">
             <div class="card-body">
-                <h1 class="h4 text-danger">
-                    Eliminar producto
-                </h1>
-                <p>
-                    Vas a eliminar:
-                </p>
-                <p class="fw-bold">
-                    {{ producto.nombre }}
-                </p>
-                <p>
-                    Esta acción no se puede deshacer.
-                </p>
+                <h1 class="h4 text-danger">Eliminar producto</h1>
+                <p>Vas a eliminar:</p>
+                <p class="fw-bold">{{ producto.nombre }}</p>
+                <p>Esta acción no se puede deshacer.</p>
                 <form method="post">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">
-                        Sí, eliminar
-                    </button>
-                    <a href="{% url 'producto_lista' %}" class="btn btn-secondary">
-                        Cancelar
-                    </a>
+                    <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+                    <a href="{% url 'producto_lista' %}" class="btn btn-secondary">Cancelar</a>
                 </form>
             </div>
         </div>
     </div>
 </div>
-{% endblock %
+{% endblock %}

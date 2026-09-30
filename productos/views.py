@@ -1,7 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from django.shortcuts import render, redirect, get_object_or_404
-# IMPORTANTE: Importamos el módulo de mensajes para las notificaciones
 from django.contrib import messages 
 from .models import Categoria, Producto
 from .forms import RegistroForm, CategoriaForm, ProductoForm
@@ -10,7 +9,6 @@ def home(request):
     return render(request, "home.html")
 
 def register(request):
-    # Si el usuario ya está logueado, lo mandamos a casa
     if request.user.is_authenticated:
         return redirect("home")
     
@@ -19,16 +17,13 @@ def register(request):
         if form.is_valid():
             usuario = form.save()
             login(request, usuario)
-            # Mensaje de éxito al registrar
             messages.success(request, "Usuario registrado correctamente.")
             return redirect("home")
         else:
-            # Mensaje de error si el formulario no es válido
             messages.error(request, "Revisa los datos del formulario.")
     else:
         form = RegistroForm()
     
-    # Renderizamos el formulario (tanto si es GET como si es POST inválido)
     return render(request, "registration/register.html", {"form": form})
 
 @login_required
@@ -42,7 +37,6 @@ def categoria_crear(request):
         form = CategoriaForm(request.POST)
         if form.is_valid():
             form.save()
-            # Mensaje de éxito al crear categoría
             messages.success(request, "Categoría creada correctamente.")
             return redirect("categoria_lista")
     else:
@@ -56,7 +50,6 @@ def categoria_editar(request, pk):
         form = CategoriaForm(request.POST, instance=categoria)
         if form.is_valid():
             form.save()
-            # Mensaje de éxito al editar
             messages.success(request, "Categoría actualizada correctamente.")
             return redirect("categoria_lista")
     else:
@@ -68,18 +61,20 @@ def categoria_eliminar(request, pk):
     categoria = get_object_or_404(Categoria, pk=pk)
     if request.method == "POST":
         categoria.delete()
-        # Mensaje de éxito al eliminar
         messages.success(request, "Categoría eliminada correctamente.")
         return redirect("categoria_lista")
     return render(request, "categorias/eliminar.html", {"categoria": categoria})
 
 def producto_lista(request):
-    # select_related mejora el rendimiento al traer la categoría asociada
-    productos = Producto.objects.select_related("categoria")
+    # select_related para traer categoria y usuario de golpe
+    productos = Producto.objects.select_related("categoria", "usuario").order_by("-fecha_creacion")
     return render(request, "productos/lista.html", {"productos": productos})
 
 def producto_detalle(request, pk):
-    producto = get_object_or_404(Producto, pk=pk)
+    producto = get_object_or_404(
+        Producto.objects.select_related("categoria", "usuario"), 
+        pk=pk
+    )
     return render(request, "productos/detalle.html", {"producto": producto})
 
 @login_required
@@ -87,34 +82,42 @@ def producto_crear(request):
     if request.method == "POST":
         form = ProductoForm(request.POST)
         if form.is_valid():
-            form.save()
-            # Mensaje de éxito al crear producto
+            # commit=False para asignar el usuario antes de guardar
+            producto = form.save(commit=False)
+            producto.usuario = request.user
+            producto.save()
             messages.success(request, "Producto creado correctamente.")
-            return redirect("producto_lista")
+            return redirect("mis_products")
     else:
         form = ProductoForm()
     return render(request, "productos/formulario.html", {"form": form, "titulo": "Nuevo producto"})
 
 @login_required
 def producto_editar(request, pk):
-    producto = get_object_or_404(Producto, pk=pk)
+    # Seguridad: Solo el dueño puede encontrar el producto
+    producto = get_object_or_404(Producto, pk=pk, usuario=request.user)
     if request.method == "POST":
         form = ProductoForm(request.POST, instance=producto)
         if form.is_valid():
             form.save()
-            # Mensaje de éxito al editar producto
             messages.success(request, "Producto actualizado correctamente.")
-            return redirect("producto_lista")
+            return redirect("mis_products")
     else:
         form = ProductoForm(instance=producto)
     return render(request, "productos/formulario.html", {"form": form, "titulo": "Editar producto"})
 
 @login_required
 def producto_eliminar(request, pk):
-    producto = get_object_or_404(Producto, pk=pk)
+    # Seguridad: Solo el dueño puede encontrar el producto
+    producto = get_object_or_404(Producto, pk=pk, usuario=request.user)
     if request.method == "POST":
         producto.delete()
-        # Mensaje de éxito al eliminar producto
         messages.success(request, "Producto eliminado correctamente.")
-        return redirect("producto_lista")
+        return redirect("mis_products")
     return render(request, "productos/eliminar.html", {"producto": producto})
+
+@login_required
+def mis_products(request):
+    # Filtramos estrictamente por el usuario actual
+    productos = Producto.objects.filter(usuario=request.user).select_related("categoria").order_by("-fecha_creacion")
+    return render(request, "productos/mis_products.html", {"productos": productos})

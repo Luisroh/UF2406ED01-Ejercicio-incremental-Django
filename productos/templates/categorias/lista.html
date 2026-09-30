@@ -22,7 +22,6 @@
                     <tr>
                         <td>{{ categoria.nombre }}</td>
                         <td>{{ categoria.descripcion }}</td>
-                        <!-- Usamos related_name para contar los productos -->
                         <td>{{ categoria.productos.count }}</td>
                         <td>
                             <a href="{% url 'categoria_editar' categoria.pk %}"
