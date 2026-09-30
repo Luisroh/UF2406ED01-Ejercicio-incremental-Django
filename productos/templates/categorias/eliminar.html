@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>
+    Eliminar categoría
+</h1>
+<p>
+    ¿Seguro que quieres eliminar
+    <strong>
+        {{ categoria.nombre }}
+    </strong>
+    ?
+</p>
+<p>
+    Atención: también se eliminarán sus productos.
+</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">
+        Eliminar
+    </button>
+</form>
+{% endblock %}

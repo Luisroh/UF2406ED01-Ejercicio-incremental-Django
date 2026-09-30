@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}
+Inicio
+{% endblock %}
+{% block content %}
+<h1>
+    Tienda Django
+</h1>
+{% if user.is_authenticated %}
+<p>
+    Bienvenido,
+    {{ user.username }}.
+</p>
+{% else %}
+<p>
+    Inicia sesión o crea una cuenta.
+</p>
+{% endif %}
+{% endblock %}
