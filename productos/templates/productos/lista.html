@@ -1,32 +1,66 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>
-    Productos
-</h1>
-{% if user.is_authenticated %}
-<a href="{% url 'producto_crear' %}">
-    Nuevo producto
-</a>
-{% endif %}
-<hr>
-{% for producto in productos %}
-<h2>
-    <a href="{% url 'producto_detalle' producto.pk %}">
-        {{ producto.nombre }}
+<div class="d-flex justify-content-between
+align-items-center mb-4">
+    <h1>
+        Categorías
+    </h1>
+    <a href="{% url 'categoria_crear' %}" class="btn btn-primary">
+        + Nueva categoría
     </a>
-</h2>
-<p>
-    Categoría:
-    {{ producto.categoria.nombre }}
-</p>
-<p>
-    Precio:
-    {{ producto.precio }} €
-</p>
-{% empty %}
-<p>
-    No existen productos.
-</p>
-
-{% endfor %}
+</div>
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>
+                            Nombre
+                        </th>
+                        <th>
+                            Descripción
+                        </th>
+                        <th>
+                            Productos
+                        </th>
+                        <th>
+                            Acciones
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for categoria in categorias %}
+                    <tr>
+                        <td>
+                            {{ categoria.nombre }}
+                        </td>
+                        <td>
+                            {{ categoria.descripcion }}
+                        </td>
+                        <td>
+                            {{ categoria.productos.count }}
+                        </td>
+                        <td>
+                            <a href="{% url 'categoria_editar' categoria.pk %}"
+                                class="btn btn-sm btn-outline-secondary">
+                                Editar
+                            </a>
+                            <a href="{% url 'categoria_eliminar' categoria.pk %}" class="btn btn-sm btn-outline-danger">
+                                Eliminar
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">
+                            No existen categorías.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 {% endblock %}
